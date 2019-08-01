@@ -1,9 +1,12 @@
 class EmployeesWorkspaceComponent {
     constructor() {
-        this.test = 0;
     }
 
     init() {
-        console.log("employees workspace loaded.")
+        console.log("employees workspace loaded.");
+    }
+
+    getWebixUI() {
+        return {template:"Employees template"};
     }
 }

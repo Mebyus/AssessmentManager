@@ -1,27 +1,27 @@
-class CandidatesWorkspaceComponent {
+class AssessmentsWorkspaceComponent {
     constructor() {
-        this.picker = new CandidatePickerComponent();
-        this.viewer = new CandidateViewerComponent();
+        this.picker = new AssessmentPickerComponent();
+        this.viewer = new AssessmentViewerComponent();
     }
 
     init() {
         this.picker.init();
         this.viewer.init();
-        console.log("candidates workspace loaded.");
+        console.log("assessments workspace loaded.");
     }
 
     getWebixUI() {
         let pickerUI = this.picker.getWebixUI();
         let viewerUI = this.viewer.getWebixUI();
 
-        let candidatesWorkspace = {
-            id:"candidatesWorkspace",
+        let assessmentsWorkspaceUI = {
+            id:"assessmentssWorkspace",
             cols: [
                 pickerUI,
                 viewerUI,
             ]
         }
 
-        return candidatesWorkspace;
+        return assessmentsWorkspaceUI;
     }
 }
