@@ -1,3 +1,5 @@
+// import {NavigationBarComponent} from "./components/navigation/navigation.js";
+
 class AppWorkspace {
     constructor() {
         this.navigationBar = new NavigationBarComponent();
@@ -11,6 +13,7 @@ class AppWorkspace {
         this.candidatesWorkspace.init();
         this.assessmentsWorkspace.init();
         this.employeesWorkspace.init();
+        webix.Date.startOnMonday = true;
         webix.ui(this.getWebixUI());
         console.log("app workspace loaded.");
     }
