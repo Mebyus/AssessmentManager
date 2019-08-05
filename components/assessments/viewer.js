@@ -46,18 +46,58 @@ class SelectBox {
 }
 
 class AssessmentViewerComponent {
-    constructor() {
+    constructor(workspace) {
+        this.workspace = workspace;
     }
 
     init() {
+        this.dateForm = $$("assessmentDateTimeForm");
+
+        this.confirmButton = $$("assessmentConfirmButton");
+        this.confirmButton.attachEvent("onItemClick", getAssessmentConfirmClickHandler(this.workspace));
+        
+        // this.editButton = $$("candidateEditButton");
+        // this.editButton.attachEvent("onItemClick", getCandidateEditClickHandler(this.workspace));
+        
+        this.deleteButton = $$("assessmentDeleteButton");
+        this.deleteButton.attachEvent("onItemClick", getAssessmentDeleteClickHandler(this.workspace));
+
         console.log("assessment viewer loaded.");
     }
 
+    view(assessment) {
+        this.dateForm.setValues({
+            date: new Date(assessment.date),
+        });
+    }
+
+    activateViewMode() {
+        // this.confirmButton.disable();
+        this.deleteButton.enable();
+        // this.editButton.enable();
+        // this.personalForm.disable();
+    }
+
+    activateCreateMode() {
+        // this.confirmButton.enable();
+        this.deleteButton.disable();
+        // this.editButton.disable();
+        // this.personalForm.enable();
+    }
+
+    clear() {
+        this.dateForm.clear();
+    }
+
+    getInputData() {
+        return this.dateForm.getValues();
+    }
+
     getWebixUI() {
-        this.candidateSelector = new SelectBox(candidateTestData, getCandidateCard, "cadidateSelector");
+        this.candidateSelector = new SelectBox([], getCandidateCard, "candidateSelector");
 
         let candidateSelectorUI = {
-            id:"cadidateSelector",
+            id:"candidateSelector",
             borderless:false,
             rows: [
                 this.candidateSelector.getHeader(),
@@ -99,22 +139,23 @@ class AssessmentViewerComponent {
             view: "toolbar",
             elements: [
                 {view:"label", label:"Assessment info", align:"center"},
-                {view:"button", value:"Confirm"},
-                {view:"button", value:"Edit"},
-                {view:"button", value:"Delete"},
+                {id: "assessmentConfirmButton", view:"button", value:"Confirm"},
+                // {view:"button", value:"Edit"},
+                {id: "assessmentDeleteButton", view:"button", value:"Delete"},
             ],
         }
 
         let dateTimeFormUI = {
+            id: "assessmentDateTimeForm",
             view: "form",
             rows:[
-                {view:"datepicker", timepicker:true, label: "Date", labelPosition: "top"},
+                {name: "date", view:"datepicker", timepicker:true, label: "Date", labelPosition: "top"},
                 {view:"text", label: "Time", labelPosition: "top"},
             ],
         }
 
         let dateTimeUI = {
-            id: "assessmentsDateTimeForm",
+            // id: "assessmentsDateTimeForm",
             rows: [
                 {view: "label", label: "Date & Time", align: "center"},
                 dateTimeFormUI,
@@ -173,6 +214,29 @@ class AssessmentViewerComponent {
 
         return viewerUI;
     }
+}
+
+function getAssessmentConfirmClickHandler(workspace) {
+    let handler = function () {
+        if (workspace.viewer.mode === "view") {
+            workspace.changeViewerMode("view");
+            workspace.updateFromViewerData();
+        } else if (workspace.viewer.mode === "create") {
+            workspace.changeViewerMode("view");
+            workspace.createFromViewerData();
+        }
+    }
+    return handler;
+}
+
+function getAssessmentDeleteClickHandler(workspace) {
+    let handler = function () {
+        if (workspace.viewer.mode === "view") {
+            workspace.changeViewerMode("view");
+            workspace.deleteCurrentAssessment();
+        }
+    }
+    return handler;
 }
 
 let testEmployeeSelectionOptions = [

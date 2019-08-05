@@ -1,10 +1,22 @@
 class CandidatePickerComponent {
-    constructor() {
-
+    constructor(workspace) {
+        this.workspace = workspace;
     }
 
     init() {
+        this.table = $$("candidateTable");
+        this.table.attachEvent("onSelectChange", getCandidateSelectChangeHandler(this.workspace));
+
+        this.newButton = $$("newCandidateButton");
+        this.newButton.attachEvent("onItemClick", getNewCandidateClickHandler(this.workspace));
+        
         console.log("candidate picker loaded.");
+    }
+
+    set(candidates) {
+        this.table.clearAll();
+        this.table.parse(candidates);
+        this.table.refresh();
     }
 
     getWebixUI() {
@@ -12,7 +24,7 @@ class CandidatePickerComponent {
             id: "candidateListToolbar",
             view: "toolbar",
             elements: [
-                {id: "createCandidateButton", view:"button", value: "New"},
+                {id: "newCandidateButton", view:"button", value: "New"},
             ]
         }
         
@@ -20,12 +32,12 @@ class CandidatePickerComponent {
             id: "candidateTable",
             view: "datatable",
             columns: [
-                {id:"name", header:"Name", fillspace:true},
+                {id:"firstName", header:"Name", fillspace:true},
                 {id:"phone", header:"Phone", fillspace:true},
                 {id:"email", header:"Email", fillspace:true},
             ],
             select: true,
-            data: candidateTestData,
+            data: [],
         }
 
         let candidatePicker = {
@@ -39,13 +51,24 @@ class CandidatePickerComponent {
 
         return candidatePicker;
     }
+
 }
 
-//Testing data
-let candidateTestData = [
-    {id: 1, name: "Tim", phone: "+7 964 643 90 41", email: "frfre@ffe.com", year: 1993},
-    {id: 2, name: "Mike Donnovan", phone:"+7 534 233 34 13", email: "f43ffe.com", year: 1990},
-    {id: 3, name: "John", phone:"+7 424 323 21 65", email: "frfrbve@ffewfde.com", year: 2003},
-    {id: 4, name: "Moe Tiblithz", phone:"+7 123 543 76 32" , email: "frfrbgf552e@ffe.com", year: 1988},
-    {id: 5, name: "Jake", phone:"+7 434 765 43 32", email: "frfre@ffe332.com", year: 1995},
-]
+function getCandidateSelectChangeHandler(workspace) {
+    let handler = function () {
+        workspace.changeViewerMode("view");
+        let item = workspace.picker.table.getSelectedItem();
+        if (item) {
+            workspace.viewCandidate(item.id);
+        }
+    }
+    return handler;
+}
+
+
+function getNewCandidateClickHandler(workspace) {
+    let handler = function () {
+        workspace.changeViewerMode("create");
+    }
+    return handler;
+}

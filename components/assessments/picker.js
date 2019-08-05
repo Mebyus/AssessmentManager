@@ -1,9 +1,22 @@
 class AssessmentPickerComponent {
-    constructor() {
+    constructor(workspace) {
+        this.workspace = workspace;
     }
 
     init() {
+        this.table = $$("assessmentTable");
+        this.table.attachEvent("onSelectChange", getAssessmentSelectChangeHandler(this.workspace));
+
+        this.newButton = $$("newAssessmentButton");
+        this.newButton.attachEvent("onItemClick", getNewAssessmentClickHandler(this.workspace));
+        
         console.log("assessment picker loaded.");
+    }
+
+    set(assessments) {
+        this.table.clearAll();
+        this.table.parse(assessments);
+        this.table.refresh();
     }
 
     getWebixUI() {
@@ -11,7 +24,7 @@ class AssessmentPickerComponent {
             id: "assessmentTableToolbar",
             view: "toolbar",
             elements: [
-                {id: "createAssessmentButton", view:"button", value: "New"},
+                {id: "newAssessmentButton", view:"button", value: "New"},
             ]
         }
         
@@ -24,7 +37,7 @@ class AssessmentPickerComponent {
                 {id:"numberOfEmployees", header:"Employees", fillspace:true}
             ],
             select: true,
-            data: assessmentTestData,
+            data: [],
         }
 
         let assessmentPickerUI = {
@@ -40,9 +53,20 @@ class AssessmentPickerComponent {
     }
 }
 
-let assessmentTestData = [
-    {date:"27 July", numberOfCandidates: 3, numberOfEmployees: 2},
-    {date:"7 September", numberOfCandidates: 4, numberOfEmployees: 1},
-    {date:"13 June", numberOfCandidates: 6, numberOfEmployees: 3},
-    {date:"21 August", numberOfCandidates: 2, numberOfEmployees: 1},
-];
+function getAssessmentSelectChangeHandler(workspace) {
+    let handler = function () {
+        workspace.changeViewerMode("view");
+        let item = workspace.picker.table.getSelectedItem();
+        if (item) {
+            workspace.viewAssessment(item.id);
+        }
+    }
+    return handler;
+}
+
+function getNewAssessmentClickHandler(workspace) {
+    let handler = function () {
+        workspace.changeViewerMode("create");
+    }
+    return handler;
+}

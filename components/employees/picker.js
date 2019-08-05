@@ -1,10 +1,21 @@
 class EmployeePickerComponent {
-    constructor() {
-
+    constructor(workspace) {
+        this.workspace = workspace;
     }
 
     init() {
+        this.table = $$("employeeTable");
+        this.table.attachEvent("onSelectChange", getEmployeeSelectChangeHandler(this.workspace));
+
+        this.newButton = $$("newEmployeeButton");
+        this.newButton.attachEvent("onItemClick", getNewEmployeeClickHandler(this.workspace));
         console.log("employee picker loaded.");
+    }
+
+    set(employees) {
+        this.table.clearAll();
+        this.table.parse(employees);
+        this.table.refresh();
     }
 
     getWebixUI() {
@@ -12,7 +23,7 @@ class EmployeePickerComponent {
             id: "employeeTableToolbar",
             view: "toolbar",
             elements: [
-                {id: "createEmployeeButton", view:"button", value: "New"},
+                {id: "newEmployeeButton", view:"button", value: "New"},
             ]
         }
         
@@ -21,10 +32,12 @@ class EmployeePickerComponent {
             view: "datatable",
             columns: [
                 {id:"id", header:"id", minWidth:60},
-                {id:"name", header:"Name", fillspace:true},
+                {id:"firstName", header:"First Name", fillspace:true},
+                {id:"middleName", header:"Middle Name", fillspace:true},
+                {id:"lastName", header:"Last Name", fillspace:true},
             ],
             select: true,
-            data: employeeTestData,
+            data: [],
         }
 
         let employeePickerUI = {
@@ -40,9 +53,21 @@ class EmployeePickerComponent {
     }
 }
 
-let employeeTestData = [
-    {id:1, name:"Rudolf"},
-    {id:2, name:"Jane"},
-    {id:3, name:"Quentin"},
-    {id:4, name:"Van-der Varden"},
-];
+function getEmployeeSelectChangeHandler(workspace) {
+    let handler = function () {
+        workspace.changeViewerMode("view");
+        let item = workspace.picker.table.getSelectedItem();
+        if (item) {
+            workspace.viewEmployee(item.id);
+        }
+    }
+    return handler;
+}
+
+
+function getNewEmployeeClickHandler(workspace) {
+    let handler = function () {
+        workspace.changeViewerMode("create");
+    }
+    return handler;
+}

@@ -10,11 +10,12 @@ class AppWorkspace {
 
     init() {
         this.navigationBar.init();
+        webix.Date.startOnMonday = true;
+        webix.ui(this.getWebixUI());
         this.candidatesWorkspace.init();
         this.assessmentsWorkspace.init();
         this.employeesWorkspace.init();
-        webix.Date.startOnMonday = true;
-        webix.ui(this.getWebixUI());
+        
         console.log("app workspace loaded.");
     }
 
