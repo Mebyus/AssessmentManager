@@ -13,6 +13,10 @@ class CandidatePickerComponent {
         console.log("candidate picker loaded.");
     }
 
+    /**
+     * Очищает таблицу кандидатов и заполняет ее новыми данными из параметра candidates.
+     * @param {Array} candidates Массив с новыми данными для таблцы.
+     */
     set(candidates) {
         this.table.clearAll();
         this.table.parse(candidates);
@@ -54,6 +58,13 @@ class CandidatePickerComponent {
 
 }
 
+/**
+ * Создает обработчик события "onSelectChange" (смены выделения) в таблице
+ * кандидатов.
+ * @param {CandidateWorkspaceComponent} workspace Объект, содержащий 
+ * CandidatePickerComponent с данной таблицей.
+ * @returns {DocumentAndElementEventHandlers} Обработчик события "onSelectChange".
+ */
 function getCandidateSelectChangeHandler(workspace) {
     let handler = function () {
         workspace.changeViewerMode("view");
